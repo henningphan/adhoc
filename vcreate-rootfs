@@ -1,0 +1,48 @@
+#!/usr/bin/env nix-shell
+#! nix-shell -i bash -p bash -p wget
+set -e
+sudo rm -rf rootfs/ || true
+if [[ ! -f ./alpine-minirootfs-3.13.2-x86_64.tar.gz ]]; then
+wget https://dl-cdn.alpinelinux.org/alpine/v3.13/releases/x86_64/alpine-minirootfs-3.13.2-x86_64.tar.gz
+fi
+mkdir rootfs/
+cd rootfs
+
+# this needs sudo to be able to set root permissions on fs components
+sudo tar -xf ../alpine-minirootfs-3.13.2-x86_64.tar.gz
+# this will get created when the VM actually boots by the dhcp client
+# but we need it in the chroot to download packages
+sudo cp /etc/resolv.conf etc/
+# the alpine mini rootfs is meant for docker containers, we need a few extra
+# things for a working rootfs
+sudo chroot $PWD /sbin/apk add openrc busybox-initscripts
+# we are using the paravirt console in cloud-hypervisor, so enable it in init
+# append it after the other console since it doesn't work just appending it
+sudo sed -i '/vt100/a \n# paravirt console\nhvc0::respawn:/sbin/getty -L hvc0 115200 vt100' etc/inittab
+# set no password for root user... you obviously don't want to do this for
+# any sort of production setup
+sudo sed -i 's/root:!::0:::::/root:::0:::::/' etc/shadow
+
+# set up init scripts
+#for i in acpid crond
+#    sudo ln -sf /etc/init.d/$i etc/runlevels/default/$i
+#end
+#for i in bootmisc hostname hwclock loadkmap modules networking swap sysctl syslog urandom
+#    sudo ln -sf /etc/init.d/$i etc/runlevels/boot/$i
+#end
+#
+#for i in killprocs mount-ro savecache
+#    sudo ln -sf /etc/init.d/$i etc/runlevels/shutdown/$i
+#end
+#
+#for i in devfs dmesg hwdrivers mdev
+#    sudo ln -sf /etc/init.d/$i etc/runlevels/sysinit/$i
+#end
+# setup network config
+echo 'auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+' | sudo tee etc/network/interfaces
+

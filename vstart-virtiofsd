@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+sudo virtiofsd --socket-path=$PWD/virtiofs-rootfs.sock --shared-dir=$PWD/rootfs --cache=never
