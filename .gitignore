@@ -1,0 +1,4 @@
+.direnv
+alpine-minirootfs-3.13.2-x86_64.tar.gz
+rootfs/
+virtiofs-rootfs.sock.pid
