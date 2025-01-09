@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-sudo virtiofsd --socket-path=$PWD/virtiofs-rootfs.sock --shared-dir=$PWD/rootfs --cache=never
+sudo virtiofsd "--socket-path=$PWD/virtiofs-rootfs.sock" "--shared-dir=$PWD/rootfs" --cache=never
+sudo rm "$PWD/virtiofs-rootfs.sock"

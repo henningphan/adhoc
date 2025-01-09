@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+sudo curl --unix-socket ch.sock -i -X PUT  http://localhost/api/v1/vmm.shutdown

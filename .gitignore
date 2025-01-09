@@ -2,3 +2,10 @@
 alpine-minirootfs-3.13.2-x86_64.tar.gz
 rootfs/
 virtiofs-rootfs.sock.pid
+debug-console
+del
+focal-server-cloudimg-amd64.img
+focal-server-cloudimg-amd64.raw
+hypervisor-fw
+ubuntu-cloudinit.img
+

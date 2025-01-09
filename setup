@@ -1,0 +1,15 @@
+#!/usr/bin/env nix-shell
+#!nix-shell -i bash -p bash -p wget -p qemu-utils
+if [[ ! -f focal-server-cloudimg-amd64.img ]]; then
+  echo "downloading focal-server-cloudimg-amd64.img"
+  wget https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
+fi
+if [[ ! -f  focal-server-cloudimg-amd64.raw ]]; then
+  echo "creating  focal-server-cloudimg-amd64.raw"
+  qemu-img convert -p -f qcow2 -O raw focal-server-cloudimg-amd64.img focal-server-cloudimg-amd64.raw
+fi
+
+if [[ ! -f hypervisor-fw ]]; then
+  echo "downloading hypervisor-fw"
+  wget https://github.com/cloud-hypervisor/rust-hypervisor-firmware/releases/download/0.4.2/hypervisor-fw
+fi
