@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+fconfig=~/repo/firecracker-bazel/result
+KERNEL="$(jq .kernel "$fconfig")"
+ROOT_DRIVE="$(jq '.["root-drive"]' "$fconfig")"
+echo "KERNEL=$KERNEL"
+echo "ROOT_DRIVE=$ROOT_DRIVE"
+echo sudo cloud-hypervisor \
+    --cpus boot=1,max=1 \
+    --kernel "$KERNEL" \
+    --fs "tag=/dev/root,socket=$PWD/virtiofs-rootfs.sock" \
+    --memory size=2G,shared=on \
+    --cmdline "console=hvc0 rootfstype=virtiofs root=/dev/root rw debug" \
+    -vvv \
+    --api-socket "$PWD/ch.sock" \
+    --net "tap=,mac=,ip=,mask="
+    echo \
+    --log-file ./log-file \
+    --serial file=./serial \
+    --console off
+
+
+# --net <net>...
+# Network parameters "tap=<if_name>,ip=<ip_addr>,mask=<net_mask>,mac=<mac_addr>,fd=<fd1,fd2...>,iommu=on|off,num_queues=<number_of_queues>,queue_size=<size_of_each_queue>,id=<device_id>,vhost_user=<vhost_user_enable>,socket=<vhost_user_socket_path>,vhost_mode=client|server,bw_size=<bytes>,bw_one_time_burst=<bytes>,bw_refill_time=<ms>,ops_size=<io_ops>,ops_one_time_burst=<io_ops>,ops_refill_time=<ms>,pci_segment=<segment_id>offload_tso=on|off,offload_ufo=on|off,offload_csum=on|off"
