@@ -18,7 +18,7 @@ sudo cp /etc/resolv.conf etc/
 sudo chroot $PWD /sbin/apk add openrc busybox-initscripts
 # we are using the paravirt console in cloud-hypervisor, so enable it in init
 # append it after the other console since it doesn't work just appending it
-sudo sed -i '/vt100/a \n# paravirt console\nhvc0::respawn:/sbin/getty -L hvc0 115200 vt100' etc/inittab
+sudo sed -i '/vt100/a # paravirt console\nhvc0::respawn:/sbin/getty -L hvc0 115200 vt100' etc/inittab
 # set no password for root user... you obviously don't want to do this for
 # any sort of production setup
 sudo sed -i 's/root:!::0:::::/root:::0:::::/' etc/shadow
