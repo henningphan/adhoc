@@ -18,15 +18,19 @@
       quit = pkgs.writeScriptBin "quit" ''
         sudo curl --unix-socket ch.sock -i -X PUT  http://localhost/api/v1/vmm.shutdown
         '';
+      vmmClient = pkgs.writeScriptBin "vmm-client" ''
+        ./vmm-client "$@"
+        '';
 
       in
         pkgs.mkShell {
           buildInputs = with pkgs; [
             cloud-hypervisor
             jq
+            vmmClient
             virtiofsd
-          qemu-utils
-          quit
+            qemu-utils
+            quit
           ];
         };
 

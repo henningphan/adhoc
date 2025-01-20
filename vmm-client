@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+case $1 in
+  quit|shutdown)
+    sudo curl --unix-socket ch.sock -i -X PUT  http://localhost/api/v1/vmm.shutdown
+  ;;
+startvmm)
+  echo "Starting barebone vmm without a vm"
+   cloud-hypervisor --api-socket "$PWD/ch.sock" \
+    -vv
+       ;;
+  ping)
+    sudo curl --unix-socket ch.sock -i -X GET  http://localhost/api/v1/vmm.ping
+    ;;
+  boot)
+    sudo curl --unix-socket ch.sock -i -X PUT http://localhost/api/v1/vm.boot
+    ;;
+    snapshot)
+    mkdir "$2" || exit 1
+    sudo curl --unix-socket ch.sock -i -X PUT  http://localhost/api/v1/vm.snapshot \
+      --json @- << EOF
+{"destination_url": "file://$2"}
+EOF
+  ;;
+createvm)
+    sudo curl --unix-socket ch.sock -i -X PUT  http://localhost/api/v1/vm.create \
+      --json @- << EOF
+{
+  "cpus": {
+    "boot_vcpus": 1,
+    "max_vcpus": 1
+  },
+  "memory": {
+    "size": 2048,
+    "shared": true
+  },
+  "payload": {
+    "kernel": "abc",
+    "cmdline": "console=ttyS0 rootfstype=virtiofs root=/dev/root rw debug"
+
+  },
+  "fs": [{
+    "num_queues": 1,
+    "queue_size": 1024,
+    "socket": "$PWD/virtiofs-rootfs.sock",
+    "tag": "/dev/root"
+  }],
+  "serial": {
+    "mode": "Tty"
+  },
+  "console": {
+    "mode": "Off"
+  }
+}
+EOF
+      ;;
+  pause)
+    sudo curl --unix-socket ch.sock -i -X PUT  http://localhost/api/v1/vm.pause
+  ;;
+  resume)
+    sudo curl --unix-socket ch.sock -i -X PUT  http://localhost/api/v1/vm.resume
+  ;;
+  count)
+  cat << "EOF"
+count=0; while true; do echo $count; sleep 1; count=$((count+1)); done
+EOF
+  ;;
+  esac
