@@ -60,9 +60,20 @@ EOF
   resume)
     sudo curl --unix-socket ch.sock -i -X PUT  http://localhost/api/v1/vm.resume
   ;;
+  info)
+    sudo curl --unix-socket ch.sock -i -X GET  http://localhost/api/v1/vm.info
+  ;;
   count)
   cat << "EOF"
 count=0; while true; do echo $count; sleep 1; count=$((count+1)); done
 EOF
+  ;;
+  startsnapshot)
+    rm ch.sock || true
+    sudo cloud-hypervisor \
+      --api-socket "$PWD/ch.sock" \
+      --restore "source_url=file:///tmp/hello" \
+      --event-monitor "path=./event-monitor" \
+      -vv
   ;;
   esac

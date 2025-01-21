@@ -4,9 +4,9 @@ sudo cloud-hypervisor \
     --kernel ./ch-vmlinux \
     --fs "tag=/dev/root,socket=$PWD/virtiofs-rootfs.sock" \
     --memory size=2G,shared=on \
-    --cmdline "console=hvc0 rootfstype=virtiofs root=/dev/root ro debug" \
+    --cmdline "console=hvc0 rootfstype=virtiofs root=/dev/root debug" \
     --api-socket "$PWD/ch.sock" \
-    --net "tap=,mac=,ip=,mask=" \
+    --net "tap=,mac=,ip=,mask="
 
 
 # --net <net>...
