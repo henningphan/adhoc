@@ -1,6 +1,12 @@
 #!/usr/bin/env nix-shell
 #! nix-shell -i bash -p bash -p wget
 set -e
+if [[ ! -f ./ch-vmlinux ]]; then
+  echo "fetch ch-vmlinux"
+  curl -L https://github.com/cloud-hypervisor/linux/releases/download/ch-release-v6.12.8-20250114/vmlinux -o ch-vmlinux
+fi
+
+echo "Recreating alpine rootfs"
 sudo rm -rf rootfs/ || true
 if [[ ! -f ./alpine-minirootfs-3.13.2-x86_64.tar.gz ]]; then
 wget https://dl-cdn.alpinelinux.org/alpine/v3.13/releases/x86_64/alpine-minirootfs-3.13.2-x86_64.tar.gz
